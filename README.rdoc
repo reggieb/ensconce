@@ -1,0 +1,3 @@
+== ensconce
+
+A wrapper for data stores
