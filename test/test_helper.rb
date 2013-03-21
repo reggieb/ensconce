@@ -1,5 +1,7 @@
 require 'test/unit'
 require_relative '../lib/ensconce'
+require 'yaml'
+require 'fileutils'
 
 class Test::Unit::TestCase
   private

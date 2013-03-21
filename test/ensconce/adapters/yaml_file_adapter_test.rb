@@ -1,6 +1,4 @@
 require_relative '../../test_helper'
-require 'yaml'
-require 'fileutils'
 
 module Ensconce
   class YamlFileAdapterTest < Test::Unit::TestCase

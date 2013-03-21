@@ -19,5 +19,25 @@ module Ensconce
       @users['user_1'].merge!({'first_name' => name})
       assert_equal(@users, current_data_for('users'))
     end
+    
+    def test_new
+      @key = 'user_99'
+      @user = {
+        @key => {
+          'first_name' => 'Ice',
+          'last_name' => 'Cream',
+          'gender' => 'female'
+        }
+      }
+      @data_store = DataStore.new(@key, @user[@key])
+      assert_equal(@user[@key], @data_store)
+    end
+    
+    def test_create
+      test_new
+      @data_store.save
+      @users.merge! @user
+      assert_equal(@users, current_data_for('users'))
+    end
   end
 end

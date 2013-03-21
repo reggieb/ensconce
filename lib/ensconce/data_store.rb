@@ -10,7 +10,7 @@ class DataStore < Hash
   
   def save
     raise "adapter must be specifed" unless adapter
-    adapter.push(name, self)
+    adapter.push(name, {}.merge(self))
   end
   
   def adapter
