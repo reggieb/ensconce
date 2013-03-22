@@ -1,13 +1,13 @@
 module Ensconce
   class MydexKeyMap < KeyMap
         
-    def self.default_mappings
+    def default_mappings
       {
         'field_ds_personal_details' => field_ds_personal_details
       }
     end
     
-    def self.field_ds_personal_details
+    def field_ds_personal_details
       map_generator(
         :original =>    %w{fname      faname    gender maname      mname       nickname  suffix title},
         :replacement => %w{first_name last_name gender maiden_name middle_name nick_name suffix title},

@@ -3,18 +3,23 @@ module Ensconce
   class KeyMap
       
     def self.for(key)
-      mappings[key]
+      key_map = new 
+      key_map[key]
     end
     
-    def self.mappings
+    def mappings
       @mappings ||= default_mappings
     end
     
-    def self.map_generator(args)
+    def [](key)
+      mappings[key]
+    end
+    
+    def map_generator(args)
       MapGenerator.new(args).map
     end
     
-    def self.default_mapping
+    def default_mapping
       raise "default_mapping must be defined"
     end
     
