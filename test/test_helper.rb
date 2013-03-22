@@ -40,4 +40,8 @@ class Test::Unit::TestCase
     YAML.load_file data_path(name)
   end
   
+  def settings
+    YAML.load_file File.expand_path('../settings.yml', File.dirname(__FILE__))
+  end
+  
 end

@@ -3,13 +3,13 @@ require_relative '../../test_helper'
 module Ensconce
   class MydexAdapterTest < Test::Unit::TestCase
     def setup
-      MydexAdapter.config(
-        url: 'https://sbx-api.mydex.org/',
-        key: 'LlPwdnq38tMtCPP7u60HjTYy35MxAVkf',
-        api_key: 'rN31O75AWviNYezE2vWsMDP6kS88Zc5P',
-        con_id: '93-1545', 
-        id: 93
-      )
+      mydex_settings = settings['mydex']
+      mydex_settings = HashBuilder.new(
+        :keys => mydex_settings.keys, 
+        :values => mydex_settings.values,
+        :keys_mod => lambda {|key| key.to_sym}
+      ).hash
+      MydexAdapter.config(mydex_settings)
     end
 
     def test_get
