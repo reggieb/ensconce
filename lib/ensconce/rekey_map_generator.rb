@@ -1,8 +1,8 @@
 module Ensconce
   
-  # Used to convert pairs of arrays into a hash
+  # Used to convert pairs of arrays into a hash for use in Mangle.rekey
   # 
-  #     map_generator = MapGenerator.new :keys => ['a', 'b'], :values => ['1', '2']
+  #     map_generator = RekeyMapGenerator.new :keys => ['a', 'b'], :values => ['1', '2']
   #     map_generator.map   --> {'a' => '1', 'b' => '2'}
   #     
   # Also allows modification of keys or values
@@ -16,8 +16,7 @@ module Ensconce
   # You can use a Proc to define a mod, but I'd recommend not doing so as a
   # return statement in the Proc can cause an unexpected result (see tests).
   #
-  
-  class MapGenerator
+  class RekeyMapGenerator
     
     attr_accessor :keys, :values, :keys_mod, :values_mod
     

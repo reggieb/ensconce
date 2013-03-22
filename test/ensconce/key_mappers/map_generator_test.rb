@@ -6,7 +6,7 @@ module Ensconce
     def setup
       @words = %w{one two three}
       @numbers = %w{1 2 3}
-      @map_generator = MapGenerator.new(
+      @map_generator = RekeyMapGenerator.new(
         :keys => @words,
         :values => @numbers
       )
@@ -18,14 +18,14 @@ module Ensconce
     end
     
     def test_lack_of_keys
-      map_generator = MapGenerator.new(:values => @numbers)
+      map_generator = RekeyMapGenerator.new(:values => @numbers)
       assert_raise RuntimeError do
         map_generator.map
       end
     end
     
     def test_lack_of_values
-      map_generator = MapGenerator.new(:keys => @numbers)
+      map_generator = RekeyMapGenerator.new(:keys => @numbers)
       assert_raise RuntimeError do
         map_generator.map
       end
@@ -88,7 +88,7 @@ module Ensconce
     end
     
     def test_mods_on_initiation
-      map_generator = MapGenerator.new(
+      map_generator = RekeyMapGenerator.new(
         :keys => @words,
         :values => @numbers,
         :keys_mod => lambda {|element| element.reverse},
