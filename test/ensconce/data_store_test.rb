@@ -39,5 +39,21 @@ module Ensconce
       @users.merge! @user
       assert_equal(@users, current_data_for('users'))
     end
+    
+    def test_with_mydex_adapter
+      DataStore.adapter = MydexAdapter.config(
+        url: 'https://sbx-api.mydex.org/',
+        key: 'LlPwdnq38tMtCPP7u60HjTYy35MxAVkf',
+        api_key: 'rN31O75AWviNYezE2vWsMDP6kS88Zc5P',
+        con_id: '93-1545', 
+        id: 93
+      )
+      @data_store = DataStore.open('field_ds_personal_details')
+      name = 'Gillian'
+      @data_store['first_name'] = name
+      @data_store.save
+      result = DataStore.open('field_ds_personal_details')
+      assert_equal(name, result['first_name'])
+    end
   end
 end

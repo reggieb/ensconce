@@ -18,11 +18,11 @@ module Ensconce
       end
     end
     
-    # Changes the keys of a hash based on a map. The map is a hash where the
+    # Changes the keys of a hash based on a hash. The map is a hash where the
     # values are the old keys, and the values are the replacement keys
     #     original = {one: {two: 2}, three: 3}
-    #     map      = {one: :four, three: :five}
-    #     Mangle.rekey(original, map)  -->   {four: {two: 2}, five: 3}
+    #     hash      = {one: :four, three: :five}
+    #     Mangle.rekey(original, hash)  -->   {four: {two: 2}, five: 3}
     def self.rekey(hash, change_map)
       change_map.each{|old, new| hash[new] = hash.delete(old)}
       return hash

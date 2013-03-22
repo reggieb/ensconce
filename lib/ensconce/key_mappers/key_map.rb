@@ -19,12 +19,12 @@ module Ensconce
     end
     
     def map_generator(args)
-      RekeyMapGenerator.new(
+      HashBuilder.new(
         :keys => (args[:original] || args[:keys]),
         :values => (args[:replacement] || args[:values]),
         :keys_mod => (args[:original_mod] || args[:keys_mod]),
         :values_mod => (args[:replacement_mod] || args[:values_mod])
-      ).map
+      ).hash
     end
     
     def default_mapping

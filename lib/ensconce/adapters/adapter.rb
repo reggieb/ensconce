@@ -18,17 +18,17 @@ module Ensconce
       @options = data
     end
     
-    def self.get
+    def self.get(*args)
       raise_define_method_error('get')
     end
     
-    def self.push
+    def self.push(*args)
       raise_define_method_error('push')
     end
     
     private
     def self.raise_define_method_error(name)
-      raise "Class #{name} method needs to be defined"
+      raise "Class method '#{name}' needs to be defined"
     end
   end
 end

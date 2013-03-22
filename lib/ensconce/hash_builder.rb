@@ -1,22 +1,22 @@
 module Ensconce
   
-  # Used to convert pairs of arrays into a hash for use in Mangle.rekey
+  # Used to convert pairs of arrays into a hash.
   # 
-  #     map_generator = RekeyMapGenerator.new :keys => ['a', 'b'], :values => ['1', '2']
-  #     map_generator.map   --> {'a' => '1', 'b' => '2'}
+  #     hash_builder = HashBuilder.new :keys => ['a', 'b'], :values => ['1', '2']
+  #     hash_builder.hash   --> {'a' => '1', 'b' => '2'}
   #     
   # Also allows modification of keys or values
   # 
-  #    map_generator.keys_mod = lambda {|key| key.upcase}
-  #    map_generator.map   --> {'A' => '1', 'B' => '2'}
+  #    hash_builder.keys_mod = lambda {|key| key.upcase}
+  #    hash_builder.hash   --> {'A' => '1', 'B' => '2'}
   #    
-  #    map_generator.values_mod = lambda {|value| (value.to_i * 4).to_s}
-  #    map_generator.map   --> {'A' => '4', 'B' => '8'}
+  #    hash_builder.values_mod = lambda {|value| (value.to_i * 4).to_s}
+  #    hash_builder.hash   --> {'A' => '4', 'B' => '8'}
   #    
   # You can use a Proc to define a mod, but I'd recommend not doing so as a
   # return statement in the Proc can cause an unexpected result (see tests).
   #
-  class RekeyMapGenerator
+  class HashBuilder
     
     attr_accessor :keys, :values, :keys_mod, :values_mod
     
@@ -32,7 +32,7 @@ module Ensconce
       check_mods_are_valid
     end
     
-    def map
+    def hash
       valid?
       map = [processed_keys, processed_values].transpose
       Hash[map]
@@ -68,4 +68,5 @@ module Ensconce
       values_mod ? values.collect(&values_mod) : values
     end
   end
+ 
 end
