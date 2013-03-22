@@ -1,9 +1,9 @@
----
 user_1:
-  first_name: Gillian
+  first_name: Bob
   last_name: Bloggs
-  gender: male
+  gender: Male
+  
 user_2:
   first_name: Jane
   last_name: Doe
-  gender: female
+  gender: Female
