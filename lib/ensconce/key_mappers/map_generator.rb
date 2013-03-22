@@ -1,6 +1,6 @@
 module Ensconce
   
-  # Users to convert pairs of arrays into a hash
+  # Used to convert pairs of arrays into a hash
   # 
   #     map_generator = MapGenerator.new :keys => ['a', 'b'], :values => ['1', '2']
   #     map_generator.map   --> {'a' => '1', 'b' => '2'}
