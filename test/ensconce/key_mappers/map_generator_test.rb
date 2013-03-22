@@ -7,25 +7,25 @@ module Ensconce
       @words = %w{one two three}
       @numbers = %w{1 2 3}
       @map_generator = MapGenerator.new(
-        :original => @words,
-        :replacement => @numbers
+        :keys => @words,
+        :values => @numbers
       )
     end
     
     def test_initiation
-      assert_equal @words, @map_generator.original
-      assert_equal @numbers, @map_generator.replacement
+      assert_equal @words, @map_generator.keys
+      assert_equal @numbers, @map_generator.values
     end
     
-    def test_lack_of_original
-      map_generator = MapGenerator.new(:replacement => @numbers)
+    def test_lack_of_keys
+      map_generator = MapGenerator.new(:values => @numbers)
       assert_raise RuntimeError do
         map_generator.map
       end
     end
     
-    def test_lack_of_replacement
-      map_generator = MapGenerator.new(:original => @numbers)
+    def test_lack_of_values
+      map_generator = MapGenerator.new(:keys => @numbers)
       assert_raise RuntimeError do
         map_generator.map
       end
@@ -36,37 +36,63 @@ module Ensconce
       assert_equal(expected, @map_generator.map)
     end
     
-    def test_original_mod
-      @map_generator.original_mod = lambda {|element| element.upcase}
+    def test_keys_mod
+      @map_generator.keys_mod = lambda {|element| element.upcase}
       expected = {'ONE' => '1', 'TWO' => '2', 'THREE' => '3'}
       assert_equal(expected, @map_generator.map)
     end
     
-    def test_original_mod_with_invalid_input
-      @map_generator.original_mod = 'x'
+    def test_keys_mod_with_invalid_input
+      @map_generator.keys_mod = 'x'
       assert_raise RuntimeError do
         @map_generator.map
       end 
     end
     
-    def test_replacement_mod
-      @map_generator.replacement_mod = lambda {|element| (element.to_i * 2).to_s}
+    def test_values_mod
+      @map_generator.values_mod = lambda {|element| (element.to_i * 2).to_s}
       expected = {'one' => '2', 'two' => '4', 'three' => '6'}
       assert_equal(expected, @map_generator.map)
     end
     
+    # Test added to show how procs with returns in mods can cause unexpected results
     def test_mod_with_proc
-      @map_generator.replacement_mod = Proc.new {|element| (element.to_i * 2).to_s}
+      @map_generator.values_mod = Proc.new {|element| return (element.to_i * 2).to_s}
+      map = @map_generator.map
+      flunk "Never gets here"
+      # because return in Proc stops process and returns value to test_mod_with_proc caller
+    end
+    
+    # Demonstration that it is the return in the Proc that messes up the test.
+    # If you alter 'expected' in this test, the test will fail.
+    def test_mod_with_proc_and_no_return
+      @map_generator.values_mod = Proc.new {|element| (element.to_i * 2).to_s}
       expected = {'one' => '2', 'two' => '4', 'three' => '6'}
-      assert_equal(expected, @map_generator.map)
+      map = @map_generator.map
+      assert_equal(expected, map)
+    end
+    
+    # Test with lambda shows a more predictable result
+    def test_mod_with_lambda
+      @map_generator.values_mod = lambda {|element| return (element.to_i * 2).to_s}
+      expected = {'one' => '2', 'two' => '4', 'three' => '6'}
+      map = @map_generator.map
+      assert_equal(expected, map)
+    end
+    
+    def test_mod_with_lambda_and_no_return
+      @map_generator.values_mod = lambda {|element| (element.to_i * 2).to_s}
+      expected = {'one' => '2', 'two' => '4', 'three' => '6'}
+      map = @map_generator.map
+      assert_equal(expected, map)
     end
     
     def test_mods_on_initiation
       map_generator = MapGenerator.new(
-        :original => @words,
-        :replacement => @numbers,
-        :original_mod => lambda {|element| element.reverse},
-        :replacement_mod => Proc.new {|element| (element.to_i + 2).to_s}
+        :keys => @words,
+        :values => @numbers,
+        :keys_mod => lambda {|element| element.reverse},
+        :values_mod => Proc.new {|element| (element.to_i + 2).to_s}
       )
       expected = {'eno' => '3', 'owt' => '4', 'eerht' => '5'}
       assert_equal(expected, map_generator.map)

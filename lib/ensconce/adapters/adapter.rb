@@ -1,4 +1,8 @@
 module Ensconce
+  
+  # Parent class for adapters. 
+  # 
+  # Specific adapters should inherit from this class
   class Adapter
     
     def self.config(options = {})
@@ -15,16 +19,16 @@ module Ensconce
     end
     
     def self.get
-      raise_define_method_error
+      raise_define_method_error('get')
     end
     
     def self.push
-      raise_define_method_error
+      raise_define_method_error('push')
     end
     
     private
-    def self.raise_define_method_error
-      raise "Class get method needs to be defined"
+    def self.raise_define_method_error(name)
+      raise "Class #{name} method needs to be defined"
     end
   end
 end

@@ -1,5 +1,8 @@
-
 module Ensconce
+  
+  # Parent class for key maps. 
+  # 
+  # Specific key maps should inherit from this class
   class KeyMap
       
     def self.for(key)

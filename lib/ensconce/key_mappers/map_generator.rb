@@ -1,13 +1,31 @@
 module Ensconce
+  
+  # Users to convert pairs of arrays into a hash
+  # 
+  #     map_generator = MapGenerator.new :keys => ['a', 'b'], :values => ['1', '2']
+  #     map_generator.map   --> {'a' => '1', 'b' => '2'}
+  #     
+  # Also allows modification of keys or values
+  # 
+  #    map_generator.keys_mod = lambda {|key| key.upcase}
+  #    map_generator.map   --> {'A' => '1', 'B' => '2'}
+  #    
+  #    map_generator.values_mod = lambda {|value| (value.to_i * 4).to_s}
+  #    map_generator.map   --> {'A' => '4', 'B' => '8'}
+  #    
+  # You can use a Proc to define a mod, but I'd recommend not doing so as a
+  # return statement in the Proc can cause an unexpected result (see tests).
+  #
+  
   class MapGenerator
     
-    attr_accessor :original, :replacement, :original_mod, :replacement_mod
+    attr_accessor :keys, :values, :keys_mod, :values_mod
     
     def initialize(args = {})
-      @original = args[:original]
-      @replacement = args[:replacement]
-      @original_mod = args[:original_mod]
-      @replacement_mod = args[:replacement_mod]
+      @keys = args[:keys]
+      @values = args[:values]
+      @keys_mod = args[:keys_mod]
+      @values_mod = args[:values_mod]
     end
     
     def valid?
@@ -17,7 +35,7 @@ module Ensconce
     
     def map
       valid?
-      map = [processed_original, processed_replacement].transpose
+      map = [processed_keys, processed_values].transpose
       Hash[map]
     end
     
@@ -36,19 +54,19 @@ module Ensconce
     end
     
     def required_attibutes
-      [:original, :replacement]
+      [:keys, :values]
     end
     
     def mod_attributes
-      [:original_mod, :replacement_mod]
+      [:keys_mod, :values_mod]
     end
     
-    def processed_original
-      original_mod ? original.collect(&original_mod) : original
+    def processed_keys
+      keys_mod ? keys.collect(&keys_mod) : keys
     end
     
-    def processed_replacement
-      replacement_mod ? replacement.collect(&replacement_mod) : replacement
+    def processed_values
+      values_mod ? values.collect(&values_mod) : values
     end
   end
 end
