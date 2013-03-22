@@ -1,3 +1,56 @@
 == ensconce
 
-A wrapper for data stores
+Ensconce provides a common interface to data stores. The connection between
+Ensconce::DataStore and a data store provider is configured via an adapter
+
+=== YAML file data store
+
+    DataStore.adapter = YamlFileAdapter.config(:file => 'path/to/file.yml')
+    data_store = DataStore.open 'identifier'
+
+Opens a data store from the file specified within the adapter config. The store
+could look something like this:
+
+    identifier:
+      some_field: x
+
+We can get and set 'some_field' like this
+
+    data_store['some_field'] == 'x'   # returns true
+    data_store['some_field'] = 'y'
+    data_store.save
+
+The file will then look like this:
+
+    identifier:
+      some_field: y
+
+=== Mydex data source
+
+    DataStore.adapter = MydexAdapter.config(
+      url: <mydex url>
+      key: <from your user's connection settings>
+      api_key: <your api key>
+      con_id: <from your user's connection settings>
+      id: <from your user's connection settings>
+    )
+
+settings.yml is provided as a place where you can enter valid sandbox setting,
+and these will be used when testing. The test connection needs access to the
+sandbox use's personal_details area.
+
+We can then get the sandbox users data like this:
+
+  data_store = DataStore.open('field_ds_personal_details')
+  data_store['first_name'] --> Sandbox users first name
+
+Note that in Mydex the first name field is actually 'field_personal_fname'. 
+Ensconce provides key mappers that allow you to use more generic names for 
+fields, thereby making it easier to swap data stores.
+
+Updating data works just as it does for the YAML example:
+
+  data_store['first_name'] = 'Robert'
+  data_store.save
+
+Will write a new first name to the sandbox user's personal_details.
