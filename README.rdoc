@@ -5,8 +5,9 @@ Ensconce::DataStore and a data store provider is configured via an adapter
 
 === YAML file data store
 
+    user = User.new(:id => 'identifier')
     DataStore.adapter = YamlFileAdapter.config(:file => 'path/to/file.yml')
-    data_store = DataStore.open 'identifier'
+    data_store = DataStore.open user
 
 Opens a data store from the file specified within the adapter config. The store
 could look something like this:
@@ -29,8 +30,11 @@ The file will then look like this:
 
     DataStore.adapter = MydexAdapter.config(
       url: <mydex url>
-      key: <from your user's connection settings>
       api_key: <your api key>
+    )
+
+    user = MydexUser.new(
+      key: <from your user's connection settings>
       con_id: <from your user's connection settings>
       id: <from your user's connection settings>
     )
@@ -41,7 +45,7 @@ sandbox use's personal_details area.
 
 We can then get the sandbox users data like this:
 
-  data_store = DataStore.open('field_ds_personal_details')
+  data_store = DataStore.open(user, :data_set => 'field_ds_personal_details')
   data_store['first_name'] --> Sandbox users first name
 
 Note that in Mydex the first name field is actually 'field_personal_fname'. 
