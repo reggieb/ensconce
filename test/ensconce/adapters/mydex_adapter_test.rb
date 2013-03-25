@@ -13,15 +13,19 @@ module Ensconce
     end
 
     def test_get
-      data = MydexAdapter.get
-      assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
-      assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
+      VCR.use_cassette('datastore_test_get') do
+        data = MydexAdapter.get
+        assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
+        assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
+      end
     end
     
     def test_get_for_specific_user
-      data = MydexAdapter.get 'field_ds_personal_details'
-      assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
-      assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
+      VCR.use_cassette('datastore_test_get_specfic_user') do
+        data = MydexAdapter.get 'field_ds_personal_details'
+        assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
+        assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
+      end
     end
 
     def test_push
@@ -29,9 +33,13 @@ module Ensconce
       key = 'first_name'
       
       values.each do |value|
-        MydexAdapter.push('field_ds_personal_details', {key => value})
-        result = MydexAdapter.get 'field_ds_personal_details'
-        assert_equal(value, result[key])
+        VCR.use_cassette("datastore_push_#{value}") do
+          MydexAdapter.push('field_ds_personal_details', {key => value})
+        end
+        VCR.use_cassette("datastore_get_#{value}") do
+          result = MydexAdapter.get 'field_ds_personal_details'
+          assert_equal(value, result[key])
+        end      
       end
     end
   end

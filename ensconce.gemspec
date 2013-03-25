@@ -15,5 +15,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
   
   s.add_dependency 'faraday'
+  s.add_development_dependency 'vcr'
+  s.add_development_dependency 'webmock'
 
 end

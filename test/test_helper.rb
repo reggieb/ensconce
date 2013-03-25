@@ -2,6 +2,16 @@ require 'test/unit'
 require_relative '../lib/ensconce'
 require 'yaml'
 require 'fileutils'
+require 'vcr'
+
+# VCR records HTTP requests and replays them on future test. Speeds up testing
+# and removes dependency on remote app being working and available during tests.
+# However, they should be reset as required.
+VCR.configure do |c|
+  cassette_path = 'fixtures/vcr_cassettes' # Remove files in this folder to reset vcr
+  c.cassette_library_dir = File.expand_path(cassette_path, File.dirname(__FILE__))
+  c.hook_into :webmock # or :fakeweb
+end
 
 class Test::Unit::TestCase
   private

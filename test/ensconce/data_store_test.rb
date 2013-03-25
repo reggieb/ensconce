@@ -48,12 +48,17 @@ module Ensconce
         :keys_mod => lambda {|key| key.to_sym}
       ).hash
       DataStore.adapter = MydexAdapter.config(mydex_settings)
-      @data_store = DataStore.open('field_ds_personal_details')
-      name = 'Gillian'
-      @data_store['first_name'] = name
-      @data_store.save
-      result = DataStore.open('field_ds_personal_details')
-      assert_equal(name, result['first_name'])
+      VCR.use_cassette('datastore_before_mydex_adapter_test') do
+        @data_store = DataStore.open('field_ds_personal_details')
+        @name = 'Gillian'
+        @data_store['first_name'] = @name
+        @data_store.save
+      end  
+      VCR.use_cassette('datastore_after_mydex_adapter_test') do
+        result = DataStore.open('field_ds_personal_details')
+        assert_equal(@name, result['first_name'])
+      end
+      
     end
   end
 end
