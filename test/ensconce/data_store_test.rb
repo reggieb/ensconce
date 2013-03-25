@@ -5,7 +5,8 @@ module Ensconce
     def setup
       DataStore.adapter = YamlFileAdapter.config(:file => data_path('users'))
       @users = fixture['users']
-      @data_store = DataStore.open 'user_1'
+      user = TestUser.new(id: 'user_1')
+      @data_store = DataStore.open user
     end
     
     def test_open
@@ -21,16 +22,16 @@ module Ensconce
     end
     
     def test_new
-      @key = 'user_99'
+      user = TestUser.new(id: 'user_99')
       @user = {
-        @key => {
+        user.id => {
           'first_name' => 'Ice',
           'last_name' => 'Cream',
           'gender' => 'female'
         }
       }
-      @data_store = DataStore.new(@key, @user[@key])
-      assert_equal(@user[@key], @data_store)
+      @data_store = DataStore.new(user, :data => @user[user.id])
+      assert_equal(@user[user.id], @data_store)
     end
     
     def test_create
@@ -41,21 +42,28 @@ module Ensconce
     end
     
     def test_with_mydex_adapter
-      mydex_settings = settings['mydex']
-      mydex_settings = HashBuilder.new(
-        :keys => mydex_settings.keys, 
-        :values => mydex_settings.values,
-        :keys_mod => lambda {|key| key.to_sym}
-      ).hash
-      DataStore.adapter = MydexAdapter.config(mydex_settings)
+      DataStore.adapter = MydexAdapter.config(        
+        url: settings['mydex']['url'],
+        api_key: settings['mydex']['api_key']
+      )
+      @user = TestUser.new(
+        :key => settings['mydex']['key'], 
+        :con_id => settings['mydex']['con_id'],
+        :id => settings['mydex']['id']
+      )
       VCR.use_cassette('datastore_before_mydex_adapter_test') do
-        @data_store = DataStore.open('field_ds_personal_details')
+        @data_store = DataStore.open(
+          @user, 
+          :data_set => 'field_ds_personal_details')
         @name = 'Gillian'
         @data_store['first_name'] = @name
         @data_store.save
       end  
       VCR.use_cassette('datastore_after_mydex_adapter_test') do
-        result = DataStore.open('field_ds_personal_details')
+        result = DataStore.open(
+          @user, 
+          :data_set => 'field_ds_personal_details'
+        )
         assert_equal(@name, result['first_name'])
       end
       

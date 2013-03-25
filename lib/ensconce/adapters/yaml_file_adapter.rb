@@ -1,16 +1,21 @@
 module Ensconce
   class YamlFileAdapter < Adapter
+    
+    def self.all
+      YAML.load_file options[:file]
+    end
 
-    def self.get(key = nil)
+    def get
       raise "No file defined" unless options[:file]
       data = YAML.load_file options[:file]
-      key ? data[key] : data
+      data[settings.id]
     end
 
-    def self.push(key, data)
-      result = Mangle.deep_merge get, {key => data}
+    def push(data)
+      result = Mangle.deep_merge self.class.all, {settings.id => data}
       File.open(options[:file], 'w+') {|f| f.write(result.to_yaml) }
     end
+    
 
   end
 end

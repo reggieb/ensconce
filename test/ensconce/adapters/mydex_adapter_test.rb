@@ -3,26 +3,29 @@ require_relative '../../test_helper'
 module Ensconce
   class MydexAdapterTest < Test::Unit::TestCase
     def setup
-      mydex_settings = settings['mydex']
-      mydex_settings = HashBuilder.new(
-        :keys => mydex_settings.keys, 
-        :values => mydex_settings.values,
-        :keys_mod => lambda {|key| key.to_sym}
-      ).hash
-      MydexAdapter.config(mydex_settings)
-    end
-
-    def test_get
-      VCR.use_cassette('datastore_test_get') do
-        data = MydexAdapter.get
-        assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
-        assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
-      end
+      
+      MydexAdapter.config(
+        url: settings['mydex']['url'],
+        api_key: settings['mydex']['api_key']
+      )
     end
     
-    def test_get_for_specific_user
-      VCR.use_cassette('datastore_test_get_specfic_user') do
-        data = MydexAdapter.get 'field_ds_personal_details'
+    def test_adapter_for
+      user = TestUser.new(
+        :key => settings['mydex']['key'], 
+        :con_id => settings['mydex']['con_id'],
+        :id => settings['mydex']['id']
+      )
+      @adapter = MydexAdapter.for(user, :data_set => 'field_ds_personal_details')
+      assert_equal(settings['mydex']['key'], @adapter.settings.key)
+    end
+
+
+    
+    def test_get
+      test_adapter_for
+      VCR.use_cassette('datastore_test_get') do
+        data = @adapter.get
         assert_equal(MydexKeyMap.field_ds_personal_details_map[:replacement], data.keys)
         assert(data.values.collect{|v| v unless v.empty?}.compact.length > 0, "Values should not all be empty")
       end
@@ -31,13 +34,13 @@ module Ensconce
     def test_push
       values = %w{Harry Mary Trevor}
       key = 'first_name'
-      
+      test_adapter_for
       values.each do |value|
         VCR.use_cassette("datastore_push_#{value}") do
-          MydexAdapter.push('field_ds_personal_details', {key => value})
+          @adapter.push({key => value})
         end
         VCR.use_cassette("datastore_get_#{value}") do
-          result = MydexAdapter.get 'field_ds_personal_details'
+          result = @adapter.get
           assert_equal(value, result[key])
         end      
       end

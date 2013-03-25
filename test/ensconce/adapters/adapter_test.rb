@@ -11,9 +11,10 @@ module Ensconce
     
     def test_method_holders
       methods = %w{get push}
+      adapter = Adapter.new
       methods.each do |method|
         assert_raise RuntimeError, "Adapter.#{method} should raise an error." do
-          Adapter.send method
+          adapter.send method
         end
       end  
     end

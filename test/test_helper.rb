@@ -54,4 +54,14 @@ class Test::Unit::TestCase
     YAML.load_file File.expand_path('../settings.yml', File.dirname(__FILE__))
   end
   
+  class TestUser
+    attr_accessor :key, :id, :con_id
+    
+    def initialize(args = {})
+      @key = args[:key]
+      @id = args[:id]
+      @con_id = args[:con_id]
+    end
+  end
+  
 end

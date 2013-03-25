@@ -8,6 +8,8 @@ module Ensconce
       YamlFileAdapter.config(
         :file => data_path('users')
       )
+      @user = TestUser.new(:id => 'user_1')
+      @adapter = YamlFileAdapter.for(@user)
     end
 
     def test_setup
@@ -15,17 +17,13 @@ module Ensconce
     end
 
     def test_get
-      assert_equal(@users, YamlFileAdapter.get)
-    end
-    
-    def test_get_for_specific_user
-      assert_equal(@users['user_1'], YamlFileAdapter.get('user_1'))
+      assert_equal(@users[@user.id], @adapter.get)
     end
 
     def test_push
       update = {"first_name" => 'Harry'}
-      YamlFileAdapter.push('user_1', update)
-      @users['user_1'].merge!(update)
+      @adapter.push(update)
+      @users[@user.id].merge!(update)
       assert_equal(@users, current_data_for('users'))
     end
 

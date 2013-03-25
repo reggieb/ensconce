@@ -1,34 +1,41 @@
 
 class DataStore < Hash
-  attr_accessor :name
+  attr_accessor :settings, :params
   
-  def initialize(name, hash = {})
+  def initialize(settings_object, params = {})
     super()
-    @name = name
-    replace hash
+    data = params.delete(:data)
+    @params = params
+    @settings = settings_object
+    replace data if data
   end
   
   def save
     raise "adapter must be specifed" unless adapter
-    adapter.push(name, {}.merge(self))
+    adapter.push({}.merge(self))
   end
   
   def adapter
-    self.class.adapter
+    @adapter ||= self.class.adapter.for(settings, params)
   end
   
-  def self.open(name)
-    raise "adapter must be specifed" unless adapter
-    data = adapter.get(name)
-    new name, data
+  def get
+    replace adapter.get.merge(self)
   end
   
   
-  def self.adapter
-    @adapter
+  def self.open(settings_object, params = {})
+    data_store = new settings_object, params
+    data_store.get
+    return data_store
   end
   
   def self.adapter=(klass)
-    @adapter = klass
+    @adapter_klass = klass
   end
+  
+  def self.adapter
+    @adapter_klass
+  end
+  
 end
