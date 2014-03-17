@@ -1,2 +1,5 @@
-.rvmrc
 test/fixtures/vcr_cassettes/*
+
+# rvm files
+.rvmrc
+.ruby-*

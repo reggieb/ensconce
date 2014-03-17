@@ -10,12 +10,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/reggieb/ensconce"
   s.summary     = "Personal Data Store Wrapper."
   s.description = "Wraps connections to Personal Data Stores, to allow data stores to changed. For example, to aid testing or swap data store provider"
-
+  s.license = 'MIT-LICENSE'
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
   
   s.add_dependency 'faraday'
-  s.add_development_dependency 'vcr'
-  s.add_development_dependency 'webmock'
-
 end
