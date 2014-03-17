@@ -3,3 +3,9 @@ test/fixtures/vcr_cassettes/*
 # rvm files
 .rvmrc
 .ruby-*
+
+# gem files
+*.gem
+
+# Settings file
+settings.yml
